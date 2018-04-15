@@ -38,10 +38,17 @@ class TestAsUnits:
         assert pytest.approx(76.2) == 40.05 @ nscale_feet
 
     def test_compostion(self):
-        foo = AsUnits(3, 'foo')
-        bar = AsUnits(5, 'bar')
+        def foo_snapper(mm):
+            return 3 * mm
+
+        def bar_snapper(mm):
+            return -mm
+
+        foo = AsUnits(3, 'foo', snapper=foo_snapper)
+        bar = AsUnits(5, 'bar', snapper=bar_snapper)
         foobar = foo * bar
         assert 30.0 == 2.0 * foobar
+        assert -90 == 2.0 @ foobar
         assert 'foo bar' == foobar.name
 
     def test_inverse(self):

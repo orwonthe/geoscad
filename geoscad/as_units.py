@@ -39,7 +39,13 @@ class AsUnits:
 
     def __mul__(self, other):
         if isinstance(other, AsUnits):
-            return AsUnits(self._in_millimeters * other._in_millimeters, ' '.join([self.name, other.name]))
+            def snapper(mm):
+                return other.snapper(self.snapper(mm))
+            return AsUnits(
+                self._in_millimeters * other._in_millimeters,
+                ' '.join([self.name, other.name]),
+                snapper=snapper
+            )
 
 
 # Unit translation is into millimeters
