@@ -18,6 +18,7 @@ REQUIRED = [
     'attrs==17.4.0',
     'euclid3==0.1',
     'more-itertools==4.1.0',
+    'numpy==1.14.2',
     'pluggy==0.6.0',
     'prettytable==0.7.2',
     'py==1.5.3',
