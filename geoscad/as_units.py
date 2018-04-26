@@ -53,6 +53,7 @@ inches = AsUnits(25.4, '"')
 feet = AsUnits(12.0 * inches, "'")
 nscale_inches = AsUnits(1 / 160 * inches, 'n"')
 nscale_feet = AsUnits(3 / 40 * inches, "n'")
+mm = AsUnits(1.0, "mm")
 
 # Used with @ operator will snap to nearest layer or even numbered layer
 layer = AsUnits(1, 'layer', snap_to_single_resolution)
