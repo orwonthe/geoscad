@@ -12,35 +12,11 @@ class Node:
         self.position = as_numpy(position)
 
 
-class OrientedNode:
+class OrientedNode(Node, Orientation):
     def __init__(self, position=None, node=None, orientation=None, tangent=None, normal=None, surface=None):
-        if node is None:
-            node = Node(position)
+        if position is None:
+            position = node.position
+        Node.__init__(self, position=position)
         if orientation is None:
             orientation = Orientation(tangent=tangent, normal=normal, surface=surface)
-        self._node = node
-        self._orientation = orientation
-
-    @property
-    def node(self):
-        return self._node
-
-    @property
-    def orientation(self):
-        return self._orientation
-
-    @property
-    def position(self):
-        return self.node.position
-
-    @property
-    def tangent(self):
-        return self.orientation.tangent
-
-    @property
-    def normal(self):
-        return self.orientation.normal
-
-    @property
-    def surface(self):
-        return self.orientation.surface
+        Orientation.__init__(self, tangent=orientation.tangent, normal=orientation.normal)

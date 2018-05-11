@@ -1,3 +1,6 @@
+import math
+
+
 def snap_to_double_resolution(mm, layers_per_millimeter=10):
     layer_pairs_per_millimeter = layers_per_millimeter / 2
     return round(layer_pairs_per_millimeter * mm) / layer_pairs_per_millimeter
@@ -5,6 +8,10 @@ def snap_to_double_resolution(mm, layers_per_millimeter=10):
 
 def snap_to_single_resolution(mm, layers_per_millimeter=10):
     return round(layers_per_millimeter * mm) / layers_per_millimeter
+
+
+def snap_to_integral_degrees(angle):
+    return math.pi * round(180 * angle / math.pi) / 180.0
 
 
 class AsUnits:
@@ -41,6 +48,7 @@ class AsUnits:
         if isinstance(other, AsUnits):
             def snapper(mm):
                 return other.snapper(self.snapper(mm))
+
             return AsUnits(
                 self._in_millimeters * other._in_millimeters,
                 ' '.join([self.name, other.name]),
@@ -58,3 +66,6 @@ mm = AsUnits(1.0, "mm")
 # Used with @ operator will snap to nearest layer or even numbered layer
 layer = AsUnits(1, 'layer', snap_to_single_resolution)
 even_layer = AsUnits(1, 'layer2', snap_to_double_resolution)
+
+# Unit translation is into radians
+Degrees = AsUnits(math.pi / 180.0, 'degrees', snap_to_integral_degrees)

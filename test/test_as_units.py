@@ -1,7 +1,9 @@
+import math
+
 import pytest
 
 from geoscad.as_units import inches, nscale_feet, AsUnits, snap_to_double_resolution, layer, even_layer, \
-    snap_to_single_resolution
+    snap_to_single_resolution, snap_to_integral_degrees, Degrees
 
 
 def test_snap_to_double_resolution():
@@ -18,6 +20,20 @@ def test_snap_to_single_resolution():
     assert pytest.approx(0.9) == snap_to_single_resolution(0.899)
     assert pytest.approx(0.6) == snap_to_single_resolution(0.601)
     assert pytest.approx(0.4) == snap_to_single_resolution(0.3999)
+
+
+class TestAsDegrees:
+    def setup(self):
+        self.seven_degrees = math.pi * 7 / 180
+        self.seven_plus_degrees = math.pi * 7.1 / 180
+
+    def test_snap_to_integral_degrees(self):
+        assert pytest.approx(self.seven_degrees) == snap_to_integral_degrees(self.seven_plus_degrees)
+
+    def test_degrees(self):
+        assert pytest.approx(self.seven_degrees) == 7 * Degrees
+        assert pytest.approx(self.seven_plus_degrees) == 7.1 * Degrees
+        assert pytest.approx(self.seven_degrees) == 7.1 @ Degrees
 
 
 class TestAsUnits:

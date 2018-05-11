@@ -1,4 +1,5 @@
 import math
+
 import numpy as np
 
 
@@ -25,15 +26,19 @@ def orthogonal_reduction(v, unit_vector):
 def component(v, unit_vector):
     return np.dot(v, unit_vector) * unit_vector
 
+
 def distance(a, b):
     return length(a - b)
 
+
 class Orientation:
+    # Always right handed
     def __init__(self, tangent=None, normal=None, surface=None):
-        if tangent is not None:
-            self._tangent = np_direction(tangent)
-        else:
+        if tangent is None:
             self._normal = np_direction(normal)
+        else:
+            self._tangent = np_direction(tangent)
+
         if surface is None:
             self._normal = direction(orthogonal_reduction(as_numpy(normal), self._tangent))
             self._surface = np.cross(self._tangent, self._normal)
@@ -47,6 +52,7 @@ class Orientation:
             raise ValueError("Exactly one Orientation parameter must be None")
 
     def __neg__(self):
+        # Sign of surface does not change, maintaining right handedness
         return Orientation(tangent=-self.tangent, normal=-self.normal)
 
     @property
