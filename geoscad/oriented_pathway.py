@@ -3,7 +3,9 @@ import math
 import numpy as np
 
 from geoscad.node import OrientedNode
-from geoscad.orientation import length, Orientation, direction
+from geoscad.orientation import length, Orientation, direction, distance
+
+PRECISION_CRITERIA = 0.00001
 
 
 class OrientedPathway:
@@ -37,6 +39,20 @@ class OrientedPathway:
 
     def _interpolation(self, phase):
         raise NotImplementedError()
+
+    def append(self, node, angle=None):
+        if angle is None or angle == 0.0:
+            continuation = LinearOrientedPathway(start=self.stop, stop=node, normal=self.stop.normal)
+        else:
+            continuation = CircularOrientedPathway(start=self.stop, stop=node, normal=self.stop.normal, angle=angle)
+        return JoinedOrientedPathway(self, continuation)
+
+    def prepend(self, node, angle=None):
+        if angle is None or angle == 0.0:
+            continuation = LinearOrientedPathway(stop=self.start, start=node, normal=self.stop.normal)
+        else:
+            continuation = CircularOrientedPathway(stop=self.start, start=node, normal=self.start.normal, angle=angle)
+        return JoinedOrientedPathway(continuation, self)
 
 
 class LinearOrientedPathway(OrientedPathway):
@@ -78,3 +94,22 @@ class CircularOrientedPathway(OrientedPathway):
         surface = math.cos(angle) * self._radial + math.sin(angle) * self._rotary
         position = self._center + self._radius * surface
         return OrientedNode(position=position, normal=self._normal, surface=surface)
+
+
+class JoinedOrientedPathway(OrientedPathway):
+    def __init__(self, leading_path, trailing_path):
+        length = leading_path.length + trailing_path.length
+        if PRECISION_CRITERIA * self.length > distance(leading_path.stop, trailing_path.start):
+            raise ValueError("Disjoint path connection")
+        self.leading_path = leading_path
+        self.trailing_path = trailing_path
+        self.breaking_phase = leading_path.length / length
+        self.leading_scale = 1.0 / self.breaking_phase
+        self.trailing_scale = length / trailing_path.length
+        super().__init__(start=leading_path.start, stop=trailing_path.stop, length=length)
+
+    def _interpolation(self, phase):
+        if phase < self.breaking_phase:
+            return self.leading_path.at_phase(phase * self.leading_scale)
+        else:
+            return self.trailing_path((phase - self.breaking_phase) * self.trailing_scale)
