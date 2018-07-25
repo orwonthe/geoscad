@@ -6,6 +6,7 @@ Z_DIRECTION = as_numpy([0, 0, 1])
 
 
 class Node:
+    """A location in three dimensional space"""
     def __init__(self, position=None):
         if position is None:
             position = [0, 0, 0]
@@ -13,6 +14,7 @@ class Node:
 
 
 class OrientedNode(Node, Orientation):
+    """Oriented location in three dimensional space."""
     def __init__(self, position=None, node=None, orientation=None, tangent=None, normal=None, surface=None):
         if position is None:
             position = node.position

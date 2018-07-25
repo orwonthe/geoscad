@@ -32,6 +32,7 @@ def distance(a, b):
 
 
 class Orientation:
+    """Triple of right handed three dimensional unit vectors."""
     # Always right handed
     def __init__(self, tangent=None, normal=None, surface=None):
         if tangent is None:

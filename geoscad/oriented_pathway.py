@@ -9,6 +9,13 @@ PRECISION_CRITERIA = 0.00001
 
 
 class OrientedPathway:
+    """
+    A finite length oriented path through three dimensional space.
+
+    It provides starting and ending nodes.
+    Intermediate nodes along the path can be indexed by either path length or path phase.
+    Path phase is defined as a 0 to 1 proportion of total path length
+    """
     def __init__(self, start, stop, length):
         self._start = start
         self._stop = stop
@@ -41,6 +48,7 @@ class OrientedPathway:
         raise NotImplementedError()
 
     def append(self, node, angle=None):
+        """Create new path by appending node to end of path."""
         if angle is None or angle == 0.0:
             continuation = LinearOrientedPathway(start=self.stop, stop=node, normal=self.stop.normal)
         else:
@@ -48,6 +56,7 @@ class OrientedPathway:
         return JoinedOrientedPathway(self, continuation)
 
     def prepend(self, node, angle=None):
+        """Create new path by prepending node to start of path."""
         if angle is None or angle == 0.0:
             continuation = LinearOrientedPathway(stop=self.start, start=node, normal=self.stop.normal)
         else:
@@ -56,6 +65,7 @@ class OrientedPathway:
 
 
 class LinearOrientedPathway(OrientedPathway):
+    """Special case of straight line OrientedPath."""
     def __init__(self, start, stop, normal=None, surface=None):
         self._delta = stop.position - start.position
         self._orientation = Orientation(tangent=self._delta, normal=normal, surface=surface)
@@ -70,6 +80,7 @@ class LinearOrientedPathway(OrientedPathway):
 
 
 class CircularOrientedPathway(OrientedPathway):
+    """Special case of OrientedPathway along a circular arc."""
     def __init__(self, start, stop, normal, angle):
         self._normal = direction(normal)
         self._angle = angle
@@ -97,15 +108,18 @@ class CircularOrientedPathway(OrientedPathway):
 
 
 class JoinedOrientedPathway(OrientedPathway):
+    """
+    OrientedPathway formed from the concatenation of two pathways connected at stop and start respectively.
+    """
     def __init__(self, leading_path, trailing_path):
         length = leading_path.length + trailing_path.length
         if PRECISION_CRITERIA * self.length > distance(leading_path.stop, trailing_path.start):
             raise ValueError("Disjoint path connection")
         self.leading_path = leading_path
         self.trailing_path = trailing_path
-        self.breaking_phase = leading_path.length / length
-        self.leading_scale = 1.0 / self.breaking_phase
+        self.leading_scale = length / leading_path.length
         self.trailing_scale = length / trailing_path.length
+        self.breaking_phase = leading_path.length / length
         super().__init__(start=leading_path.start, stop=trailing_path.stop, length=length)
 
     def _interpolation(self, phase):
