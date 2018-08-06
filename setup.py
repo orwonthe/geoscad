@@ -12,7 +12,7 @@ DESCRIPTION = 'Geometry Tools for SolidPython wrapping for OpenSCAD.'
 AUTHOR = 'William Mills'
 EMAIL = ''
 URL = 'https://github.com/orwonthe/geoscad.git'
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 
 REQUIRED = [
     'attrs==17.4.0',
