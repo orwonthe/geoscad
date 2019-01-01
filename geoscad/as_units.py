@@ -72,6 +72,8 @@ inches = AsUnits(25.4, '"')
 feet = AsUnits(12.0 * inches, "'")
 nscale_inches = AsUnits(1 / 160 * inches, 'n"') # N Scale model railroading uses 1:160 scaling ratio.
 nscale_feet = AsUnits(3 / 40 * inches, "n'")
+ho_scale_inches = AsUnits(1 / 87 * inches, 'ho"') # HO Scale model railroading uses 1:87 scaling ratio.
+ho_scale_feet = AsUnits(12 / 87 * inches, "ho'")
 mm = AsUnits(1.0, "mm") # Translating millimeters to millimeters is useful as a documentation artifice.
 
 # When used with @ operator will snap to nearest layer or even numbered layer
