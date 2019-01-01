@@ -1,6 +1,16 @@
 from solid import cube, mirror, union, cylinder, intersection, translate, minkowski, sphere
 from solid.utils import up, left, right, forward
 
+EMPTY_SCAD = union()([])
+
+
+class RejectAll:
+    def __call__(self, *args, **kwargs):
+        return EMPTY_SCAD
+
+
+REJECT_ALL = RejectAll()
+
 
 def grounded_cube(shape):
     half_height = shape[2] / 2
